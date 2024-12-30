@@ -17,7 +17,12 @@ D_data = data['D'].values
 # Convertir les données en dictionnaire
 data_dict = {'S': S_data, 'I': I_data, 'R': R_data, 'D': D_data}
 
-if __name__ == "__main__":
+# Paramètres initiaux
+S0, I0, R0, D0 = S_data[0], I_data[0], R_data[0], D_data[0] # Conditions initiales
+delta_t = 0.01 # Pas
+duration = time_data[-1] # Durée totale de la simulation
+
+'''if __name__ == "__main__":
     # Paramètres épidémiologiques
     beta = 0.5  # Taux de transmission
     gamma = 0.15  # Taux de guérison
@@ -34,7 +39,7 @@ if __name__ == "__main__":
     duration = 1  # Durée totale de la simulation (en jours)
 
     # Appel de la fonction pour simuler le modèle SIRD
-    time, S, I, R, D = method_euler_sird(beta, gamma, mu, S0, I0, R0, D0, delta_t, duration)
+    time, S, I, R, D = method_euler_sird(beta, gamma, mu, S0, I0, R0, D0, delta_t, duration)'''
 
     # Visualisation des résultats
     plt.figure(figsize=(10, 6))
