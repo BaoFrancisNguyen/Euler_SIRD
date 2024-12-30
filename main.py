@@ -1,5 +1,11 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 from functions_app import method_euler_sird
+
+
+
+# Charger les données empiriques
+data = pd.read_csv('sird_dataset.csv')
 
 if __name__ == "__main__":
     # Paramètres épidémiologiques
