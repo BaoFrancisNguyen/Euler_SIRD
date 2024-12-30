@@ -14,6 +14,9 @@ I_data = data['I'].values
 R_data = data['R'].values
 D_data = data['D'].values
 
+# Convertir les données en dictionnaire
+data_dict = {'S': S_data, 'I': I_data, 'R': R_data, 'D': D_data}
+
 if __name__ == "__main__":
     # Paramètres épidémiologiques
     beta = 0.5  # Taux de transmission
