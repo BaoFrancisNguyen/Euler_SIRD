@@ -7,6 +7,13 @@ from functions_app import method_euler_sird
 # Charger les données empiriques
 data = pd.read_csv('sird_dataset.csv')
 
+# Extraire les données
+time_data = data['time'].values
+S_data = data['S'].values
+I_data = data['I'].values
+R_data = data['R'].values
+D_data = data['D'].values
+
 if __name__ == "__main__":
     # Paramètres épidémiologiques
     beta = 0.5  # Taux de transmission
