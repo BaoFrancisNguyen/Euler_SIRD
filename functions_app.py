@@ -30,7 +30,7 @@
 # importation des bibliothèques
 import numpy as np
 
-def euler_sird(beta, gamma, mu, S0, I0, R0, D0, delta_t, duration):
+def method_euler_sird(beta, gamma, mu, S0, I0, R0, D0, delta_t, duration):
 
     # Calcul du nombre total de pas de temps
     steps = int(duration / delta_t)
@@ -56,3 +56,17 @@ def euler_sird(beta, gamma, mu, S0, I0, R0, D0, delta_t, duration):
         D[temps + 1] = D[temps] + delta_t * (mu * I[temps])
 
     return time, S, I, R, D
+
+def cost_function(data, model):
+    """
+    Calcul du Mean Squared Error entre les données observées et le modèle
+
+    Paramètres:
+    data (numpy.ndarray): Données empiriques (observées)
+    model (numpy.ndarray): Données simulées (issues du modèle)
+
+    Return:
+    - MSE (float): Erreur quadratique moyenne.
+    """
+    mse = np.mean((data - model) ** 2)
+    return mse
