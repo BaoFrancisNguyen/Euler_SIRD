@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from functions_app import method_euler_sird
+from functions_app import method_euler_sird, cost_function
 
 
 
@@ -41,18 +41,18 @@ duration = time_data[-1] # Durée totale de la simulation
     # Appel de la fonction pour simuler le modèle SIRD
     time, S, I, R, D = method_euler_sird(beta, gamma, mu, S0, I0, R0, D0, delta_t, duration)'''
 
-    # Visualisation des résultats
-    plt.figure(figsize=(10, 6))
-    plt.plot(time, S, label="Susceptibles (S)", linewidth=2)
-    plt.plot(time, I, label="Infectés (I)", linewidth=2)
-    plt.plot(time, R, label="Rétablis (R)", linewidth=2)
-    plt.plot(time, D, label="Décédés (D)", linewidth=2)
-    plt.xlabel("Temps (jours)", fontsize=12)
-    plt.ylabel("Proportion de la population", fontsize=12)
-    plt.title("Modèle SIRD - Simulation de la propagation d'une maladie", fontsize=14)
-    plt.legend()
-    plt.grid()
-    plt.show()
+# Visualisation des résultats
+plt.figure(figsize=(10, 6))
+plt.plot(time, S, label="Susceptibles (S)", linewidth=2)
+plt.plot(time, I, label="Infectés (I)", linewidth=2)
+plt.plot(time, R, label="Rétablis (R)", linewidth=2)
+plt.plot(time, D, label="Décédés (D)", linewidth=2)
+plt.xlabel("Temps (jours)", fontsize=12)
+plt.ylabel("Proportion de la population", fontsize=12)
+plt.title("Modèle SIRD - Simulation de la propagation d'une maladie", fontsize=10)
+plt.legend()
+plt.grid()
+plt.show()
 
 
 # test de la fonction method_euler_sird sur une journée:
