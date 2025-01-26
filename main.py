@@ -39,9 +39,12 @@ def optimize_parameters(beta_range, gamma_range, mu_range):
     best_params = None
     min_cost = float('inf')
 
+    #étape 1 : Création d'une grille de paramètres
+    # Parcourir toutes les combinaisons possibles de beta, gamma, et mu
     for beta in beta_range:
         for gamma in gamma_range:
             for mu in mu_range:
+                #étape 2 : Simulation pour chaque combinaison de paramètres
                 time_sim, S_sim, I_sim, R_sim, D_sim = method_euler_sird(
                     beta, gamma, mu, S0, I0, R0, D0, delta_t, duration
                 )
@@ -52,8 +55,9 @@ def optimize_parameters(beta_range, gamma_range, mu_range):
                     I_sim_resampled = np.interp(time_data, time_sim, I_sim)
                 else:
                     I_sim_resampled = I_sim
-
+                #étape 3 : Calcul du coût pour cette combinaison
                 cost = cost_function(I_data, I_sim_resampled)
+                #étape 4 : Conserver la meilleure combinaison trouvée
                 if cost < min_cost:
                     min_cost = cost
                     best_params = (beta, gamma, mu)
