@@ -58,15 +58,18 @@ def method_euler_sird(beta, gamma, mu, S0, I0, R0, D0, delta_t, duration):
     return time, S, I, R, D
 
 def cost_function(data, model):
-    """
-    Calcul du Mean Squared Error entre les données observées et le modèle
 
-    Paramètres:
-    data (numpy.ndarray): Données empiriques (observées)
-    model (numpy.ndarray): Données simulées (issues du modèle)
+    #Pour ce projet, le MSE est adapté aux données continues et facile à interpréter. la CCE pourrait être utile pour comparer
+    #  des distributions probabilistes
+    
+    #calcul du Mean Squared Error entre les données observées et le modèle
 
-    Return:
-    - MSE (float): Erreur quadratique moyenne.
-    """
+    #paramètres:
+    #data (numpy.ndarray): Données empiriques (observées)
+    #model (numpy.ndarray): Données simulées (issues du modèle)
+
+    #return:
+    #MSE (float): Erreur quadratique moyenne.
+    
     mse = np.mean((data - model) ** 2)
     return mse
