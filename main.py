@@ -1,26 +1,27 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 from functions_app import method_euler_sird, cost_function
+from scipy.optimize import minimize # pour minimiser la fonction coût avec la méthode de Newton ou de BFGS (Broyden-Fletcher-Goldfarb-Shanno)
 
 
-
-# Charger les données empiriques
+#charger les données empiriques à partir du fichier csv
 data = pd.read_csv('sird_dataset.csv')
 
-# Extraire les données
+#extraction des données
 time_data = data['time'].values
 S_data = data['S'].values
 I_data = data['I'].values
 R_data = data['R'].values
 D_data = data['D'].values
 
-# Convertir les données en dictionnaire
+# convertion des données en dictionnaire
 data_dict = {'S': S_data, 'I': I_data, 'R': R_data, 'D': D_data}
 
-# Paramètres initiaux
-S0, I0, R0, D0 = S_data[0], I_data[0], R_data[0], D_data[0] # Conditions initiales
+# paramètres début
+S0, I0, R0, D0 = S_data[0], I_data[0], R_data[0], D_data[0] # conditions initiales
 delta_t = 0.01 # Pas
-duration = time_data[-1] # Durée totale de la simulation
+duration = time_data[-1] # durée totale de la simulation
 
 '''if __name__ == "__main__":
     # Paramètres épidémiologiques
@@ -40,6 +41,24 @@ duration = time_data[-1] # Durée totale de la simulation
 
     # Appel de la fonction pour simuler le modèle SIRD
     time, S, I, R, D = method_euler_sird(beta, gamma, mu, S0, I0, R0, D0, delta_t, duration)'''
+
+#fonction pour ajuster les paramètres du modèle
+def optimize_parameters(beta_range, gamma_range, mu_range):
+    best_params = None
+    min_cost = float('inf')
+
+    for beta in beta_range:
+        for gamma in gamma_range:
+            for mu in mu_range:
+                time_sim, S_sim, I_sim, R_sim, D_sim = method_euler_sird(
+                    beta, gamma, mu, S0, I0, R0, D0, delta_t, duration
+                )
+                cost = cost_function(I_data, I_sim)
+                if cost < min_cost:
+                    min_cost = cost
+                    best_params = (beta, gamma, mu)
+
+    return best_params, min_cost
 
 # Visualisation des résultats
 plt.figure(figsize=(10, 6))
