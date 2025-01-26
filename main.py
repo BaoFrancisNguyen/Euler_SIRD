@@ -60,6 +60,20 @@ def optimize_parameters(beta_range, gamma_range, mu_range):
 
     return best_params, min_cost
 
+#définition des plages de valeurs pour les paramètres
+
+beta_range = np.linspace(0.25, 0.5, 6)
+gamma_range = np.linspace(0.08, 0.15, 8)
+mu_range = np.linspace(0.005, 0.015, 11)
+
+#optimisation des paramètres
+best_params, min_cost = optimize_parameters(beta_range, gamma_range, mu_range)
+print(f"Meilleurs paramètres trouvés : β={best_params[0]}, γ={best_params[1]}, μ={best_params[2]} avec un coût de {min_cost}")
+
+#simulation avec les meilleurs paramètres
+time_opt, S_opt, I_opt, R_opt, D_opt = method_euler_sird(
+    best_params[0], best_params[1], best_params[2], S0, I0, R0, D0, delta_t, duration
+
 # Visualisation des résultats
 plt.figure(figsize=(10, 6))
 plt.plot(time, S, label="Susceptibles (S)", linewidth=2)
