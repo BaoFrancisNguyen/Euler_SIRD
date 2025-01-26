@@ -9,19 +9,20 @@ from scipy.optimize import minimize # pour minimiser la fonction coût avec la m
 data = pd.read_csv('sird_dataset.csv')
 
 #extraction des données
-time_data = data['time'].values
-S_data = data['S'].values
-I_data = data['I'].values
-R_data = data['R'].values
-D_data = data['D'].values
+time_data = data['Jour'].values
+S_data = data['Susceptibles'].values
+I_data = data['Infectés'].values
+R_data = data['Rétablis'].values
+D_data = data['Décès'].values
 
 # convertion des données en dictionnaire
-data_dict = {'S': S_data, 'I': I_data, 'R': R_data, 'D': D_data}
+data_dict = {'Susceptibles': S_data, 'Infectés': I_data, 'Rétablis': R_data, 'Décès': D_data}
 
 # paramètres début
 S0, I0, R0, D0 = S_data[0], I_data[0], R_data[0], D_data[0] # conditions initiales
 delta_t = 0.01 # Pas
 duration = time_data[-1] # durée totale de la simulation
+steps = len(time_data)  #correspondre au nombre de points empiriques
 
 '''if __name__ == "__main__":
     # Paramètres épidémiologiques
@@ -53,7 +54,13 @@ def optimize_parameters(beta_range, gamma_range, mu_range):
                 time_sim, S_sim, I_sim, R_sim, D_sim = method_euler_sird(
                     beta, gamma, mu, S0, I0, R0, D0, delta_t, duration
                 )
-                cost = cost_function(I_data, I_sim)
+                # Ajuster les dimensions pour correspondre aux données empiriques
+                if len(time_sim) != len(time_data):
+                    I_sim_resampled = np.interp(time_data, time_sim, I_sim)
+                else:
+                    I_sim_resampled = I_sim
+
+                cost = cost_function(I_data, I_sim_resampled)
                 if cost < min_cost:
                     min_cost = cost
                     best_params = (beta, gamma, mu)
@@ -72,17 +79,15 @@ print(f"Meilleurs paramètres trouvés : β={best_params[0]}, γ={best_params[1]
 
 #simulation avec les meilleurs paramètres
 time_opt, S_opt, I_opt, R_opt, D_opt = method_euler_sird(
-    best_params[0], best_params[1], best_params[2], S0, I0, R0, D0, delta_t, duration
+    best_params[0], best_params[1], best_params[2], S0, I0, R0, D0, delta_t, duration)
 
 # Visualisation des résultats
-plt.figure(figsize=(10, 6))
-plt.plot(time, S, label="Susceptibles (S)", linewidth=2)
-plt.plot(time, I, label="Infectés (I)", linewidth=2)
-plt.plot(time, R, label="Rétablis (R)", linewidth=2)
-plt.plot(time, D, label="Décédés (D)", linewidth=2)
+plt.figure(figsize=(12, 8))
+plt.plot(time_data, I_data, label="Infectés - Empirique", linestyle="--", linewidth=2)
+plt.plot(time_opt, I_opt, label="Infectés - Modèle ajusté", linewidth=2)
 plt.xlabel("Temps (jours)", fontsize=12)
 plt.ylabel("Proportion de la population", fontsize=12)
-plt.title("Modèle SIRD - Simulation de la propagation d'une maladie", fontsize=10)
+plt.title("Ajustement du modèle SIRD aux données empiriques", fontsize=14)
 plt.legend()
 plt.grid()
 plt.show()
