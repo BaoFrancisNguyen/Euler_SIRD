@@ -18,32 +18,23 @@ D_data = data['Décès'].values
 # convertion des données en dictionnaire
 data_dict = {'Susceptibles': S_data, 'Infectés': I_data, 'Rétablis': R_data, 'Décès': D_data}
 
-# paramètres début
-S0, I0, R0, D0 = S_data[0], I_data[0], R_data[0], D_data[0] # conditions initiales
+##But:recréer l'histoire de l'épidémie en la rejouant avec les paramètres du modèle SIRD
+
+# configuration de la simulation / paramètres début
+S0, I0, R0, D0 = S_data[0], I_data[0], R_data[0], D_data[0] # conditions initiales (état de la population au jour 0)
 delta_t = 0.01 # Pas
-duration = time_data[-1] # durée totale de la simulation
+duration = time_data[-1] # durée totale de la simulation en fonction des données empiriques
 steps = len(time_data)  #correspondre au nombre de points empiriques
 
-'''if __name__ == "__main__":
-    # Paramètres épidémiologiques
-    beta = 0.5  # Taux de transmission
-    gamma = 0.15  # Taux de guérison
-    mu = 0.015   # Taux de mortalité
 
-    # Conditions initiales
-    S0 = 0.99  # 99% de la population est initialement susceptible
-    I0 = 0.01  # 1% de la population est infectée
-    R0 = 0.0   # 0% rétabli au départ
-    D0 = 0.0   # 0% décédé au départ
 
-    # Paramètres de simulation
-    delta_t = 0.01  # Pas de temps (en jours)
-    duration = 1  # Durée totale de la simulation (en jours)
-
-    # Appel de la fonction pour simuler le modèle SIRD
-    time, S, I, R, D = method_euler_sird(beta, gamma, mu, S0, I0, R0, D0, delta_t, duration)'''
+#On cherche les meilleurs paramètres (β, γ, μ) pour que le modèle colle au mieux aux données empiriques.
+#Le modèle simule l'épidémie pour chaque combinaison possible des paramètres.
+#Une mesure de l'erreur (cost_function) compare la simulation aux données réelles.
+#On garde les paramètres qui donnent la plus petite erreur.
 
 #fonction pour ajuster les paramètres du modèle
+
 def optimize_parameters(beta_range, gamma_range, mu_range):
     best_params = None
     min_cost = float('inf')
@@ -54,6 +45,8 @@ def optimize_parameters(beta_range, gamma_range, mu_range):
                 time_sim, S_sim, I_sim, R_sim, D_sim = method_euler_sird(
                     beta, gamma, mu, S0, I0, R0, D0, delta_t, duration
                 )
+                #Si le modèle et les données réelles n'ont pas le même nombre de points dans le temps,
+                # on "redimensionne" les résultats du modèle pour qu'ils correspondent aux données:
                 # Ajuster les dimensions pour correspondre aux données empiriques
                 if len(time_sim) != len(time_data):
                     I_sim_resampled = np.interp(time_data, time_sim, I_sim)
@@ -69,19 +62,25 @@ def optimize_parameters(beta_range, gamma_range, mu_range):
 
 #définition des plages de valeurs pour les paramètres
 
-beta_range = np.linspace(0.25, 0.5, 6)
-gamma_range = np.linspace(0.08, 0.15, 8)
-mu_range = np.linspace(0.005, 0.015, 11)
+beta_range = np.linspace(0.25, 0.5, 6) # la plage de valeurs pour beta 0.25 à 0.5 avec 6 valeurs signifie qu'une personne infectée transmet le virus à une autre personne entre 25% et 50% des contacts
+gamma_range = np.linspace(0.08, 0.15, 8) # la plage de valeurs pour gamma 0.08 à 0.15 avec 8 valeurs correspond à un délai de guérison de 7 à 12,5 jours
+mu_range = np.linspace(0.005, 0.015, 11)#correspond à une mortalité journalière entre 0,5 % et 1,5 % des infectés
 
 #optimisation des paramètres
 best_params, min_cost = optimize_parameters(beta_range, gamma_range, mu_range)
 print(f"Meilleurs paramètres trouvés : β={best_params[0]}, γ={best_params[1]}, μ={best_params[2]} avec un coût de {min_cost}")
 
+
+# Une fois les meilleurs paramètres trouvés, on les utilise pour générer une simulation finale
 #simulation avec les meilleurs paramètres
 time_opt, S_opt, I_opt, R_opt, D_opt = method_euler_sird(
     best_params[0], best_params[1], best_params[2], S0, I0, R0, D0, delta_t, duration)
 
 # Visualisation des résultats
+#On trace deux courbes :
+#La courbe empirique montre les données réelles
+#La courbe simulée montre le modèle ajusté aux données
+
 plt.figure(figsize=(12, 8))
 plt.plot(time_data, I_data, label="Infectés - Empirique", linestyle="--", linewidth=2)
 plt.plot(time_opt, I_opt, label="Infectés - Modèle ajusté", linewidth=2)
@@ -92,8 +91,5 @@ plt.legend()
 plt.grid()
 plt.show()
 
-
-# test de la fonction method_euler_sird sur une journée:
-# légère diminution des susceptibles, augmentation des infectés
 
 
