@@ -86,8 +86,15 @@ time_opt, S_opt, I_opt, R_opt, D_opt = method_euler_sird(
 #La courbe simulée montre le modèle ajusté aux données
 
 plt.figure(figsize=(12, 8))
-plt.plot(time_data, I_data, label="Infectés - Empirique", linestyle="--", linewidth=2)
-plt.plot(time_opt, I_opt, label="Infectés - Modèle ajusté", linewidth=2)
+plt.plot(time_data, S_data, label="Sains - Empirique", linestyle="--", linewidth=2, color='blue')
+plt.plot(time_opt, S_opt, label="Sains - Modèle ajusté", linewidth=2, color='blue')
+plt.plot(time_data, I_data, label="Infectés - Empirique", linestyle="--", linewidth=2, color='red')
+plt.plot(time_opt, I_opt, label="Infectés - Modèle ajusté", linewidth=2, color='red')
+plt.plot(time_data, R_data, label="Rétablis - Empirique", linestyle="--", linewidth=2, color='green')
+plt.plot(time_opt, R_opt, label="Rétablis - Modèle ajusté", linewidth=2, color='green')
+plt.plot(time_data, D_data, label="Décès - Empirique", linestyle="--", linewidth=2, color='gray')
+plt.plot(time_opt, D_opt, label="Décès - Modèle ajusté", linewidth=2, color='gray')
+
 plt.xlabel("Temps (jours)", fontsize=12)
 plt.ylabel("Proportion de la population", fontsize=12)
 plt.title("Ajustement du modèle SIRD aux données empiriques", fontsize=14)
